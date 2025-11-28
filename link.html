@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub - Your Link Management Solution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 15px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        nav ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Login Form */
+        .login-container {
+            max-width: 400px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+        }
+        
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .logout-btn {
+            background: var(--danger);
+            padding: 8px 16px;
+            width: auto;
+            margin-bottom: 10px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .admin-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-direction: column;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-width: 200px;
+            height: 150px;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        /* Links Display */
+        .links-section {
+            margin-top: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .link-image {
+            height: 140px;
+            overflow: hidden;
+        }
+        
+        .link-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .link-content {
+            padding: 15px;
+        }
+        
+        .link-title {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .link-description {
+            color: #666;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .link-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+            text-align: center;
+        }
+        
+        .link-btn:hover {
+            background: var(--secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .mobile-nav.active {
+            right: 0;
+        }
+        
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .mobile-nav-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        
+        .close-nav {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 15px;
+        }
+        
+        .mobile-nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s;
+        }
+        
+        .mobile-nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: row;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .admin-tabs {
+                padding-bottom: 5px;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .link-card {
+                margin-bottom: 15px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .logout-btn {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .form-row {
+                flex-direction: row;
+            }
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-link"></i> LinkHub
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav>
+                    <ul>
+                        <li><a href="#premium">Premium Apps</a></li>
+                        <li><a href="#notes">Notes</a></li>
+                        <li><a href="#movies">Movies</a></li>
+                        <li><a href="#documentaries">Documentaries</a></li>
+                        <li><a href="#webseries">Web Series</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <h2 class="mobile-nav-title">Menu</h2>
+            <button class="close-nav" id="closeNav">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="#premium">Premium Apps</a></li>
+            <li><a href="#notes">Notes</a></li>
+            <li><a href="#movies">Movies</a></li>
+            <li><a href="#documentaries">Documentaries</a></li>
+            <li><a href="#webseries">Web Series</a></li>
+            <li><a href="#" id="mobileAdminLogin">Admin Login</a></li>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Login Form -->
+        <div class="login-container" id="loginForm">
+            <h2>Admin Login</h2>
+            <form id="adminLogin">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn" id="loginBtn">
+                    <span id="loginText">Login</span>
+                    <span id="loginSpinner" class="loading" style="display: none;"></span>
+                </button>
+                <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                   
+                </p>
+            </form>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-header">
+                <h2 class="admin-title">Admin Dashboard</h2>
+                <button class="btn logout-btn" id="logoutBtn">Logout</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <div class="tab active" data-tab="premium">Premium Apps</div>
+                <div class="tab" data-tab="notes">Notes</div>
+                <div class="tab" data-tab="movies">Movies</div>
+                <div class="tab" data-tab="documentaries">Documentaries</div>
+                <div class="tab" data-tab="webseries">Web Series</div>
+            </div>
+            
+            <div class="tab-content active" id="premium-tab">
+                <h3>Add Premium App Link</h3>
+                <form id="premiumForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="premiumTitle">App Name</label>
+                            <input type="text" id="premiumTitle" class="form-control" placeholder="Enter app name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="premiumLink">App Link</label>
+                            <input type="url" id="premiumLink" class="form-control" placeholder="Enter app URL" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="premiumDescription">App Description</label>
+                        <textarea id="premiumDescription" class="form-control" rows="3" placeholder="Enter app description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="premiumImage">App Image</label>
+                        <input type="file" id="premiumImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="premiumPreview">
+                            <span>Image Preview</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add Premium App</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="notes-tab">
+                <h3>Add Notes Link</h3>
+                <form id="notesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="notesTitle">Notes Title</label>
+                            <input type="text" id="notesTitle" class="form-control" placeholder="Enter notes title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notesLink">Notes Link</label>
+                            <input type="url" id="notesLink" class="form-control" placeholder="Enter notes URL" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notesDescription">Notes Description</label>
+                        <textarea id="notesDescription" class="form-control" rows="3" placeholder="Enter notes description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notesImage">Notes Image</label>
+                        <input type="file" id="notesImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="notesPreview">
+                            <span>Image Preview</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add Notes</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="movies-tab">
+                <h3>Add Movie Link</h3>
+                <form id="moviesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="moviesTitle">Movie Title</label>
+                            <input type="text" id="moviesTitle" class="form-control" placeholder="Enter movie title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="moviesLink">Movie Link</label>
+                            <input type="url" id="moviesLink" class="form-control" placeholder="Enter movie URL" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="moviesDescription">Movie Description</label>
+                        <textarea id="moviesDescription" class="form-control" rows="3" placeholder="Enter movie description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="moviesImage">Movie Image</label>
+                        <input type="file" id="moviesImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="moviesPreview">
+                            <span>Image Preview</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add Movie</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="documentaries-tab">
+                <h3>Add Documentary Link</h3>
+                <form id="documentariesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="documentariesTitle">Documentary Title</label>
+                            <input type="text" id="documentariesTitle" class="form-control" placeholder="Enter documentary title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="documentariesLink">Documentary Link</label>
+                            <input type="url" id="documentariesLink" class="form-control" placeholder="Enter documentary URL" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="documentariesDescription">Documentary Description</label>
+                        <textarea id="documentariesDescription" class="form-control" rows="3" placeholder="Enter documentary description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="documentariesImage">Documentary Image</label>
+                        <input type="file" id="documentariesImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="documentariesPreview">
+                            <span>Image Preview</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add Documentary</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="webseries-tab">
+                <h3>Add Web Series Link</h3>
+                <form id="webseriesForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="webseriesTitle">Web Series Title</label>
+                            <input type="text" id="webseriesTitle" class="form-control" placeholder="Enter web series title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="webseriesLink">Web Series Link</label>
+                            <input type="url" id="webseriesLink" class="form-control" placeholder="Enter web series URL" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="webseriesDescription">Web Series Description</label>
+                        <textarea id="webseriesDescription" class="form-control" rows="3" placeholder="Enter web series description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="webseriesImage">Web Series Image</label>
+                        <input type="file" id="webseriesImage" class="form-control" accept="image/*">
+                        <div class="image-preview" id="webseriesPreview">
+                            <span>Image Preview</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add Web Series</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Links Display Section -->
+        <div class="links-section" id="premium">
+            <h2 class="section-title">Premium Apps</h2>
+            <div class="links-grid" id="premiumLinks">
+                <!-- Premium apps will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="links-section" id="notes">
+            <h2 class="section-title">Notes</h2>
+            <div class="links-grid" id="notesLinks">
+                <!-- Notes will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="links-section" id="movies">
+            <h2 class="section-title">Movies</h2>
+            <div class="links-grid" id="moviesLinks">
+                <!-- Movies will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="links-section" id="documentaries">
+            <h2 class="section-title">Documentaries</h2>
+            <div class="links-grid" id="documentariesLinks">
+                <!-- Documentaries will be displayed here -->
+            </div>
+        </div>
+        
+        <div class="links-section" id="webseries">
+            <h2 class="section-title">Web Series</h2>
+            <div class="links-grid" id="webseriesLinks">
+                <!-- Web series will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 LinkHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeNav = document.getElementById('closeNav');
+        const overlay = document.getElementById('overlay');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeNav.addEventListener('click', function() {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        overlay.addEventListener('click', function() {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Mobile admin login
+        document.getElementById('mobileAdminLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Scroll to login form
+            document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Login functionality
+        document.getElementById('adminLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            
+            // Show loading state
+            loginText.style.display = 'none';
+            loginSpinner.style.display = 'inline-block';
+            loginBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(function() {
+                // Simple authentication (in a real app, this would be server-side)
+                if (username === 'reemadi' && password === 'ReemaDi@12') {
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert('Invalid credentials. Try admin/admin123');
+                }
+                
+                // Reset button
+                loginText.style.display = 'inline-block';
+                loginSpinner.style.display = 'none';
+                loginBtn.disabled = false;
+            }, 1000);
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Image preview functionality
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        imageInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const previewId = this.id.replace('Image', 'Preview');
+                const preview = document.getElementById(previewId);
+                
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+        
+        // Form submission and link storage
+        const forms = document.querySelectorAll('.tab-content form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formId = this.id;
+                const category = formId.replace('Form', '');
+                
+                const title = document.getElementById(`${category}Title`).value;
+                const link = document.getElementById(`${category}Link`).value;
+                const description = document.getElementById(`${category}Description`).value;
+                const imageInput = document.getElementById(`${category}Image`);
+                
+                // Create link object
+                const linkItem = {
+                    title: title,
+                    link: link,
+                    description: description,
+                    image: imageInput.files.length > 0 ? URL.createObjectURL(imageInput.files[0]) : null
+                };
+                
+                // Save to localStorage
+                let links = JSON.parse(localStorage.getItem(category)) || [];
+                links.push(linkItem);
+                localStorage.setItem(category, JSON.stringify(links));
+                
+                // Display the new link
+                displayLink(linkItem, category);
+                
+                // Reset form
+                this.reset();
+                document.getElementById(`${category}Preview`).innerHTML = '<span>Image Preview</span>';
+                
+                alert(`${category.charAt(0).toUpperCase() + category.slice(1)} link added successfully!`);
+            });
+        });
+        
+        // Display links from localStorage
+        function displayLinks() {
+            const categories = ['premium', 'notes', 'movies', 'documentaries', 'webseries'];
+            
+            categories.forEach(category => {
+                const links = JSON.parse(localStorage.getItem(category)) || [];
+                const container = document.getElementById(`${category}Links`);
+                
+                container.innerHTML = '';
+                
+                links.forEach(link => {
+                    displayLink(link, category);
+                });
+            });
+        }
+        
+        // Display a single link
+        function displayLink(link, category) {
+            const container = document.getElementById(`${category}Links`);
+            
+            const linkCard = document.createElement('div');
+            linkCard.className = 'link-card';
+            
+            const imageSrc = link.image || 'https://via.placeholder.com/300x160?text=No+Image';
+            
+            linkCard.innerHTML = `
+                <div class="link-image">
+                    <img src="${imageSrc}" alt="${link.title}">
+                </div>
+                <div class="link-content">
+                    <h3 class="link-title">${link.title}</h3>
+                    <p class="link-description">${link.description}</p>
+                    <a href="${link.link}" target="_blank" class="link-btn">Visit Link</a>
+                </div>
+            `;
+            
+            container.appendChild(linkCard);
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayLinks();
+            
+            // Add some sample data if empty
+            const categories = ['premium', 'notes', 'movies', 'documentaries', 'webseries'];
+            categories.forEach(category => {
+                if (!localStorage.getItem(category)) {
+                    const sampleData = [
+                        {
+                            title: `Sample ${category.charAt(0).toUpperCase() + category.slice(1)}`,
+                            link: 'https://example.com',
+                            description: `This is a sample ${category} item. Add your own content through the admin panel.`,
+                            image: null
+                        }
+                    ];
+                    localStorage.setItem(category, JSON.stringify(sampleData));
+                }
+            });
+            
+            displayLinks();
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    mobileNav.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
